@@ -1,0 +1,6 @@
+<resources>
+    <style name="CustomScrollbar" parent="Theme.AppCompat.Light">
+        <!-- Custom scrollbar style using the drawable -->
+        <item name="android:scrollbarThumbVertical">@drawable/custom_scrollbar</item>
+    </style>
+</resources>

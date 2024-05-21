@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustResize"
+    android:background="@drawable/newpostbg"
+    tools:context=".AskAI">
+
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="408dp"
+        android:layout_height="644dp"
+        app:layout_constrainedHeight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:windowSoftInputMode="adjustResize"
+        android:layout_marginBottom="90dp"
+        app:layout_constraintVertical_bias="1.0" />
+
+
+    <RelativeLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="399dp"
+        android:layout_height="89dp"
+        android:windowSoftInputMode="adjustResize"
+        app:circularflow_radiusInDP="50dp"
+        android:padding="8dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        >
+
+        <EditText
+            android:id="@+id/message_edit_text"
+            android:layout_width="288dp"
+            android:layout_height="54dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="8dp"
+            android:layout_toLeftOf="@+id/send_button"
+            android:alpha="1.0"
+            android:background="@drawable/rounded_corner"
+            android:fontFamily="@font/andika_new_basic"
+            android:hint="Message Greenbook AI..."
+            android:padding="16dp"
+            android:paddingLeft="5dp"
+            android:textColor="@color/textc"
+            android:textColorHint="#8F000419" />
+
+        <ImageButton
+            android:id="@+id/send_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginEnd="18dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_baseline_send_24"
+            tools:layout_editor_absoluteX="175dp"
+            tools:layout_editor_absoluteY="555dp" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottieai"
+            android:layout_width="60dp"
+            android:layout_height="47dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            app:lottie_autoPlay="true"
+            app:lottie_repeatCount="@integer/material_motion_duration_long_2"
+            android:layout_marginEnd="7dp"
+            android:layout_marginTop="10dp"
+            app:lottie_rawRes="@raw/loading"
+            android:visibility="invisible"
+            tools:layout_editor_absoluteX="175dp"
+            tools:layout_editor_absoluteY="555dp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

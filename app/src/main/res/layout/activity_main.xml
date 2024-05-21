@@ -9,18 +9,48 @@
     tools:context=".MainActivity">
 
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:outlineAmbientShadowColor="#06EF8A"
+        app:swipeRefreshLayoutProgressSpinnerBackgroundColor="#04C370"
+        android:layout_height="580dp">
+
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
 
-        <ProgressBar
+
+        <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/pgbar"
             android:layout_width="80dp"
             android:layout_height="150dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="160dp"
             android:layout_marginTop="300dp"
+            app:lottie_autoPlay="true"
+            app:lottie_repeatCount="@integer/material_motion_duration_long_2"
+            app:lottie_rawRes="@raw/loading"
             android:layout_marginLeft="160dp" />
+
+
+
+           <androidx.recyclerview.widget.RecyclerView
+               android:layout_width="match_parent"
+               android:id="@+id/alluserpostlist"
+               android:layout_alignParentTop="true"
+               android:layout_marginTop="46dp"
+               android:scrollbars="vertical"
+               android:layout_alignParentBottom="true"
+               android:scrollbarSize="5dp"
+               android:layout_height="match_parent"
+               android:layout_centerInParent="true">
+
+           </androidx.recyclerview.widget.RecyclerView>
 
         <include
             layout="@layout/app_bar_layout"
@@ -28,37 +58,50 @@
         </include>
 
 
-           <androidx.recyclerview.widget.RecyclerView
-               android:layout_width="match_parent"
-               android:id="@+id/alluserpostlist"
-               android:layout_alignParentTop="true"
-               android:fadingEdge="vertical"
-               android:fadingEdgeLength="14dp"
-               android:requiresFadingEdge="vertical"
-               android:layout_marginTop="55dp"
-               android:scrollbars="vertical"
-               android:scrollbarSize="5dp"
-               android:layout_height="match_parent" >
+    </RelativeLayout>
 
-           </androidx.recyclerview.widget.RecyclerView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.bottomappbar.BottomAppBar
+            android:id="@+id/bottomAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:background="@color/black"
+            app:fabCradleMargin="10dp"
+            app:fabCradleRoundedCornerRadius="127dp">
+
+
+            <com.google.android.material.bottomnavigation.BottomNavigationView
+                android:id="@+id/bottomNavigationVieww"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:background="@android:color/transparent"
+                app:itemTextColor="@color/only_for_bottom_nav_bar"
+                app:labelVisibilityMode="labeled"
+                app:menu="@menu/bottom_menu" />
+
+        </com.google.android.material.bottomappbar.BottomAppBar>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="286dp"
-            android:layout_height="60dp"
-            android:id="@+id/fab_button"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentTop="true"
-            android:alpha="0.8"
-            android:layout_alignParentRight="true"
-            android:backgroundTint="#F0D8D7D7"
-            android:src="@drawable/add">
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/only_for_fab"
+            android:src="@drawable/ic_baseline_add_24"
+            app:layout_anchor="@id/bottomAppBar"
+            android:hapticFeedbackEnabled="true"
+            app:maxImageSize="40dp"
+            android:id="@+id/fab"
+            app:tint="#FFFFFF" />
 
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        </com.google.android.material.floatingactionbutton.FloatingActionButton>
-
-    </RelativeLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
@@ -66,9 +109,11 @@
         android:id="@+id/navigation_view"
         android:layout_gravity="start"
         android:layout_marginBottom="3dp"
+        android:background="@color/only_for_nav_side"
         app:menu="@menu/navigation_menu"
         >
 
     </com.google.android.material.navigation.NavigationView>
+
 
 </androidx.drawerlayout.widget.DrawerLayout>

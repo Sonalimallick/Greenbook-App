@@ -64,7 +64,7 @@ public class PublicPostActivity extends AppCompatActivity
                                 userCountry.setText("Country : "+snapshot.child(uid).child("country").getValue().toString());
                                 userGender.setText("Gender : "+snapshot.child(uid).child("gender").getValue().toString());
                                 userDOB.setText("DOB : "+snapshot.child(uid).child("dob").getValue().toString());
-                                userRelationshipStatus.setText("Relationship : "+snapshot.child(uid).child("relationshipstatus").getValue().toString());
+                                userRelationshipStatus.setText("Role : user");
                                 Picasso.get().load(snapshot.child(uid).child("Profile_Image").getValue().toString()).into(userProfileImage);
                             }
                         }

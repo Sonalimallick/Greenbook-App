@@ -64,7 +64,7 @@ public class ProfileActivity extends AppCompatActivity
                     userDOB.setText("DOB : "+myDOB);
                     userCountry.setText("Country : "+myCountry);
                     userGender.setText("Gender : "+myGender);
-                    userRelationshipStatus.setText("Relationship : "+myRelationStatus);
+                    userRelationshipStatus.setText("Role : user");
                 }
 
             }

@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -16,16 +17,18 @@ import com.google.firebase.storage.StorageReference;
 
 public class Posts
 {
-    public String uid,time,date,postimage,description,profileimage,fullname,urii="";;
+    public String uid,time,date,postimage,description,profileimage,fullname,urii="";
+    public LottieAnimationView lt;
 
     public Posts()
     {
 
     }
 
-    public Posts(String uid, String time, String date, String postimage, String description, String profileimage, String fullname)
+    public Posts(String uid, String time, String date, String postimage, String description, String profileimage, String fullname,LottieAnimationView lt)
     {
         this.uid = uid;
+        this.lt=lt;
         this.time = time;
         this.date = date;
         this.postimage = postimage;

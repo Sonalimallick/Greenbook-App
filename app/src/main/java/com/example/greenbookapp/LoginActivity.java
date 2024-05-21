@@ -41,7 +41,6 @@ public class LoginActivity extends AppCompatActivity
         UserPassword=(EditText) findViewById(R.id.login_password);
         ForgetPasswordLink=(TextView) findViewById(R.id.forget_password_link);
         LoginButton = (Button) findViewById(R.id.login_button);
-        googleSignInButton=(ImageView) findViewById(R.id.google_signin_button);
         loadingBar=new ProgressDialog(this);
 
         NeedNewAccountLink.setOnClickListener(new View.OnClickListener() {

@@ -3,9 +3,13 @@ package com.example.greenbookapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,6 +47,8 @@ public class CommentsActivity extends AppCompatActivity
     private String Post_Key,current_user_id;
     Toolbar toolbar;
 
+    LottieAnimationView ltee;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -61,10 +68,15 @@ public class CommentsActivity extends AppCompatActivity
         linearLayoutManager.setStackFromEnd(true);
         commentsList.setLayoutManager(linearLayoutManager);
         toolbar=findViewById(R.id.all_comments_toolbar);
+        ltee=findViewById(R.id.lottieaii);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("Comments");
+        toolbar.setTitleTextColor(Color.parseColor("#04C370"));
+        Drawable upArrow = ContextCompat.getDrawable(this, androidx.appcompat.R.drawable.abc_ic_ab_back_material); // Get default back icon
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.purple_200), PorterDuff.Mode.SRC_ATOP); // Set color filter
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
         CommentInputText=(EditText) findViewById(R.id.comment_input);
         postCommentButton= (ImageButton) findViewById(R.id.post_comment_btn);
@@ -73,6 +85,8 @@ public class CommentsActivity extends AppCompatActivity
             @Override
             public void onClick(View view)
             {
+                ltee.setVisibility(View.VISIBLE);
+                postCommentButton.setVisibility(View.INVISIBLE);
                 UsersRef.child(current_user_id).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot)
@@ -176,7 +190,7 @@ public class CommentsActivity extends AppCompatActivity
             final String saveCurrentDate=currentDate.format(calForDate.getTime());
 
             Calendar calFordTime=Calendar.getInstance();
-            SimpleDateFormat currentTime=new SimpleDateFormat("HH:mm");
+            SimpleDateFormat currentTime=new SimpleDateFormat("HH:mm:ss");
             final String saveCurrentTime=currentTime.format(calFordTime.getTime());
 
             final String RandomKey =current_user_id +saveCurrentDate + saveCurrentTime;
@@ -192,10 +206,11 @@ public class CommentsActivity extends AppCompatActivity
                 @Override
                 public void onComplete(@NonNull Task task)
                 {
+                    ltee.setVisibility(View.INVISIBLE);
+                    postCommentButton.setVisibility(View.VISIBLE);
                     if(task.isSuccessful())
                     {
-                        Toast.makeText(CommentsActivity.this, "You have commented successfully", Toast.LENGTH_SHORT).show();
-                        
+                        Toast.makeText(CommentsActivity.this, "Your comment has been posted successfully", Toast.LENGTH_SHORT).show();
                     }
                     else
                     {

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/home"
+        android:title="Home"
+        android:icon="@drawable/ic_baseline_home_24"/>
+
+    <item
+        android:id="@+id/askai"
+        android:title="Ask AI"
+        android:icon="@drawable/ailogo"
+        />
+
+
+    <item
+        android:title=""/>
+
+
+    <item
+        android:id="@+id/plant_health_analyzer"
+        android:title="Health Test"
+        android:icon="@drawable/ic_baseline_search_24" />
+
+    <item
+        android:id="@+id/Profile"
+        android:title="Live Guide"
+        android:icon="@drawable/realtime_mentoring" />
+
+</menu>

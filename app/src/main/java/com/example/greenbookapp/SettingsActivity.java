@@ -4,9 +4,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -56,6 +60,10 @@ public class SettingsActivity extends AppCompatActivity
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("Account Settings");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mToolbar.setTitleTextColor(Color.parseColor("#04C370"));
+        Drawable upArrow = ContextCompat.getDrawable(this, androidx.appcompat.R.drawable.abc_ic_ab_back_material); // Get default back icon
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.purple_200), PorterDuff.Mode.SRC_ATOP); // Set color filter
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
         loadingBar=new ProgressDialog(this);
         userName=findViewById(R.id.settings_username);
         userProfileName=findViewById(R.id.settings_profile_full_name);
@@ -93,7 +101,7 @@ public class SettingsActivity extends AppCompatActivity
                     userDOB.setText(myDOB);
                     userCountry.setText(myCountry);
                     userGender.setText(myGender);
-                    userRelationshipStatus.setText(myRelationStatus);
+                    userRelationshipStatus.setText("User");
 
                 }
             }
@@ -190,7 +198,7 @@ public class SettingsActivity extends AppCompatActivity
         }
         else if(TextUtils.isEmpty(userRelation))
         {
-            Toast.makeText(this, "Please write your relationship status", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please write your role", Toast.LENGTH_SHORT).show();
         }
         else
         {

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/newpostbg"
+    tools:context=".PostActivity">
+
+    <include layout="@layout/app_bar_layout"
+        android:id="@+id/mentoring_page_toolbar"
+        />
+
+
+    <TextView
+        android:layout_width="370dp"
+        android:layout_height="300dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="52dp"
+        android:id="@+id/realtime_tv"
+        android:text="Crafting a tailored plant mentoring plan based on your realtime location and weather data..."
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:textColorHint="#434141"
+        android:layout_marginLeft="8dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="10dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:textSize="18sp"
+        android:paddingBottom="10dp"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/custom_scrollbar"
+        android:gravity="left"
+        android:fontFamily="@font/andika_new_basic"
+        android:textColor="#C0F8C0"
+        android:background="@drawable/edittext7nnn"
+        />
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="40dp"
+        android:layout_height="60dp"
+        android:id="@+id/realtime_loading"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="530dp"
+        android:layout_marginStart="160dp"
+        android:layout_marginBottom="110dp"
+        android:layout_marginEnd="160dp"
+        app:lottie_repeatCount="@integer/material_motion_duration_long_2"
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/loading"
+        android:visibility="visible"
+        />
+
+</RelativeLayout>

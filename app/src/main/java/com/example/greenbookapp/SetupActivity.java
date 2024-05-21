@@ -84,7 +84,8 @@ public class SetupActivity extends AppCompatActivity
 
         ProfileImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
                 Intent galleryIntent=new Intent();
                 galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 galleryIntent.setType("image/*");
@@ -94,9 +95,9 @@ public class SetupActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
-
         if(requestCode==Gallery_pick && resultCode==RESULT_OK && data!=null && data.getData()!=null)
         {
             Uri ImageUri=data.getData();
@@ -105,11 +106,13 @@ public class SetupActivity extends AppCompatActivity
             final StorageReference reference=storage.getReference().child("Users").child(currentUserId).child("image");
             reference.putFile(ImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot)
+                {
 
                     reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
-                        public void onSuccess(Uri uri) {
+                        public void onSuccess(Uri uri)
+                        {
                             FirebaseDatabase.getInstance().getReference().child("Users").child(currentUserId).child("Profile_Image").setValue(uri.toString());
                         }
                     });

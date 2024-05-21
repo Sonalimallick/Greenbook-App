@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,8 @@ import com.squareup.picasso.Picasso;
 import org.w3c.dom.Text;
 
 import java.sql.DatabaseMetaData;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 public class ClickPostActivity extends AppCompatActivity
 {
@@ -69,10 +72,13 @@ public class ClickPostActivity extends AppCompatActivity
                     {
                         desc=desc+(char)(description.charAt(i)-27);
                     }
+                    PostDescription.setText("");
                     PostDescription.setText(desc);
+
                     Picasso.get().load(image).into(PostImage);
 
-                    if (currentUserId.equals(databaseUserID)) {
+                    if (currentUserId.equals(databaseUserID))
+                    {
                         DeletePostButton.setVisibility(View.VISIBLE);
                         EditPostButton.setVisibility(View.VISIBLE);
                     }
@@ -108,16 +114,47 @@ public class ClickPostActivity extends AppCompatActivity
     {
         AlertDialog.Builder builder=new AlertDialog.Builder(ClickPostActivity.this);
         builder.setTitle("Edit Post :");
+
         final EditText inputField = new EditText(ClickPostActivity.this);
         inputField.setText(description);
+        inputField.setTextColor(Color.parseColor("#04C370"));
         builder.setView(inputField);
 
         builder.setPositiveButton("Update", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i)
             {
-                clickPostRef.child("description").setValue(inputField.getText().toString());
-                Toast.makeText(ClickPostActivity.this, "The post has been updated successfully.", Toast.LENGTH_SHORT).show();
+                Calendar calForDate = Calendar.getInstance();
+                SimpleDateFormat currentDate=new SimpleDateFormat("dd-MMMM-yyyy");
+                String saveCurrentDate=currentDate.format(calForDate.getTime());
+
+                Calendar calFordTime=Calendar.getInstance();
+                SimpleDateFormat currentTime=new SimpleDateFormat("HH:mm");
+                String saveCurrentTime=currentTime.format(calFordTime.getTime());
+
+
+                String k=inputField.getText().toString();
+                String ecnrypted_k="";
+                for(int j=0;j<k.length();j++)
+                {
+                    ecnrypted_k=ecnrypted_k+(char)(k.charAt(j)+27);
+                }
+                String dt="";
+                for(int j=0;j<saveCurrentDate.length();j++)
+                {
+                    dt=dt+(char)(saveCurrentDate.charAt(j)+27);
+                }
+                String ti="";
+                saveCurrentTime+=" (Edited)";
+                for(int j=0;j<saveCurrentTime.length();j++)
+                {
+                    ti=ti+(char)(saveCurrentTime.charAt(j)+27);
+                }
+                clickPostRef.child("description").setValue(ecnrypted_k);
+                clickPostRef.child("time").setValue(ti);
+                clickPostRef.child("date").setValue(dt);
+                Toast.makeText(ClickPostActivity.this, "The post has been edited successfully.", Toast.LENGTH_SHORT).show();
+                SendUserToMainActivity();
             }
         });
 
@@ -131,7 +168,7 @@ public class ClickPostActivity extends AppCompatActivity
 
         Dialog dialog=builder.create();
         dialog.show();
-        dialog.getWindow().setBackgroundDrawableResource(R.color.teal_700);
+        dialog.getWindow().setBackgroundDrawableResource(R.drawable.custom_edittext2);
     }
 
     private void DeleteCurrentPost()

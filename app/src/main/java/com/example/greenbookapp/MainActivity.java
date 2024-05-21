@@ -7,12 +7,22 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -26,25 +36,38 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.ContactsContract;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
+import android.speech.tts.Voice;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.Toolbar;
+import android.window.OnBackInvokedDispatcher;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.common.api.Response;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.bottomnavigation.BottomNavigationItemView;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.datepicker.MaterialTextInputPicker;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
@@ -56,7 +79,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -75,28 +97,44 @@ import java.io.LineNumberReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity {
-
+public class MainActivity extends AppCompatActivity
+{
     private NavigationView navigationView;
+
+    BottomNavigationView bottomNavigationView;
+    private int scrolledDistance = 0;
+    private boolean controlsVisible = true;
+    private boolean isBottomNavVisible = true;
     private DrawerLayout drawerLayout;
     private RecyclerView postList;
     private androidx.appcompat.widget.Toolbar mToolbar;
     private ActionBarDrawerToggle actionBarDrawerToggle;
+
+    private TextToSpeech tts;
     private FirebaseAuth mAuth;
     private DatabaseReference UserRef,PostsRef,LikesRef,CommentsRef;
-    private ProgressBar pgbar;
-    private CircleImageView NavProfileImage,PostProfileImage, NavDPedit;
+    private LottieAnimationView pgbar;
+    private CircleImageView NavProfileImage,PostProfileImage, NavDPedit, NavAI;
     private TextView NavProfileUserName;
+
+    private LottieAnimationView lt;
     String current_user_id;
     String firebaseStorageUrl;
     boolean LikeChecker=false;
     private FloatingActionButton AddNewPostButton;
+
+    private BottomAppBar bottomAppBar;
+    private SwipeRefreshLayout swipeRefreshLayout;
     FirebaseRecyclerAdapter<Posts,PostsViewHolder> firebaseRecyclerAdapter;
     FirebaseUser currentUser;
 
@@ -105,14 +143,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         mAuth=FirebaseAuth.getInstance();
         currentUser=mAuth.getCurrentUser();
         mToolbar = findViewById(R.id.main_page_toolbar);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("Home");
+        mToolbar.setTitleTextColor(Color.parseColor("#04C370"));
+        getSupportActionBar().setTitle("Greenbook");
         UserRef=FirebaseDatabase.getInstance().getReference().child("Users");
-        AddNewPostButton=(FloatingActionButton) findViewById(R.id.fab_button);
+        AddNewPostButton=(FloatingActionButton) findViewById(R.id.fab);
         PostsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
         LikesRef=FirebaseDatabase.getInstance().getReference().child("Likes");
         CommentsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
@@ -123,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setInitialPrefetchItemCount(20);
-        //linearLayoutManager.setRecycleChildrenOnDetach(true);
         linearLayoutManager.setSmoothScrollbarEnabled(true);
         postList.setLayoutManager(linearLayoutManager);
         PostProfileImage=findViewById(R.id.post_profile_image);
@@ -132,14 +171,114 @@ public class MainActivity extends AppCompatActivity {
         navigationView= (NavigationView) findViewById(R.id.navigation_view);
         actionBarDrawerToggle=new ActionBarDrawerToggle(MainActivity.this,drawerLayout,R.string.drawer_open,R.string.drawer_close);
         drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.setDrawerSlideAnimationEnabled(true);
         actionBarDrawerToggle.syncState();
+        actionBarDrawerToggle.getDrawerArrowDrawable().setColor(getResources().getColor(R.color.purple_200));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         View navView=navigationView.inflateHeaderView(R.layout.navigation_header);
         NavProfileUserName=(TextView) navView.findViewById(R.id.nav_user_full_name);
         NavProfileImage= (CircleImageView) navView.findViewById(R.id.nav_profile_image);
         NavDPedit=navView.findViewById(R.id.change_dp);
-        pgbar=findViewById(R.id.pgbar);
+        NavAI=(CircleImageView) navView.findViewById(R.id.askourai);
+        bottomNavigationView = findViewById(R.id.bottomNavigationVieww);
+        bottomNavigationView.setBackground(null); // This line removes unwanted effects from background of the bottom nav bar
+        getSupportFragmentManager().beginTransaction().commit();
+        bottomAppBar=findViewById(R.id.bottomAppBar);
+        swipeRefreshLayout=findViewById(R.id.refreshLayout);
+        swipeRefreshLayout.setProgressBackgroundColorSchemeColor(Color.parseColor("#04C370"));
 
+        getWindow().setStatusBarColor(Color.parseColor("#000000")); // Set status bar background color
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh()
+            {
+                Intent i=new Intent(MainActivity.this,MainActivity.class);
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                finish();
+                firebaseRecyclerAdapter.startListening();
+                firebaseRecyclerAdapter.notifyDataSetChanged();
+                startActivity(i);
+            }
+        });
+
+        navigationView.setCheckedItem(R.id.nav_home);
+
+
+        Scrolling t=new Scrolling();
+        t.start();
+
+        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item)
+            {
+                switch (item.getItemId())
+                {
+                    case R.id.home:
+                        System.gc();
+                        firebaseRecyclerAdapter.stopListening();
+                        //firebaseRecyclerAdapter.notifyDataSetChanged();
+                        Intent i=new Intent(MainActivity.this,MainActivity.class);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        finish();
+                        startActivity(i);
+                        return true;
+
+                    case R.id.askai:
+                        System.gc();
+                        firebaseRecyclerAdapter.stopListening();
+                        //firebaseRecyclerAdapter.notifyDataSetChanged();
+                        postList.setAdapter(firebaseRecyclerAdapter);
+                        Intent ii=new Intent(MainActivity.this,AskAI.class);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        startActivity(ii);
+                        return true;
+
+                    case R.id.plant_health_analyzer:
+                        System.gc();
+                        firebaseRecyclerAdapter.stopListening();
+                        //firebaseRecyclerAdapter.notifyDataSetChanged();
+                        postList.setAdapter(firebaseRecyclerAdapter);
+                        Intent di=new Intent(MainActivity.this,Disease.class);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        startActivity(di);
+                        return true;
+
+                    case R.id.Profile:
+                        //SendUserToProfileActivity();
+                        Intent ik=new Intent(MainActivity.this,Realtime_Mentoring.class);
+                        startActivity(ik);
+                        System.gc();
+                        firebaseRecyclerAdapter.stopListening();
+                        //firebaseRecyclerAdapter.notifyDataSetChanged();
+                        postList.setAdapter(firebaseRecyclerAdapter);
+                        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        return true;
+                }
+                return false;
+            }
+        });
+
+        AddNewPostButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view)
+            {
+                navigationView.setCheckedItem(R.id.nav_post);
+                SendUserToPostActivity();
+            }
+        });
+
+        pgbar=findViewById(R.id.pgbar);
+        tts=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int i)
+            {
+                if(i!=TextToSpeech.ERROR)
+                {
+                    tts.setLanguage(Locale.UK);
+                }
+            }
+        });
        
 
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -163,6 +302,7 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
             }
         });
+        
 
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -182,16 +322,51 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         DisplayAllUsersPosts obj=new DisplayAllUsersPosts();
         obj.start();
     }
 
+
+
+    public class Scrolling extends Thread
+    {
+        @Override
+        public void run() {
+            super.run();
+
+            postList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                @Override
+                public void onScrolled(RecyclerView recyclerView, int dx, int dy)
+                {
+                    if (dy > 0 && bottomNavigationView.isShown()) {
+                        bottomAppBar.animate().translationY(bottomNavigationView.getHeight());
+                        AddNewPostButton.animate().translationY(bottomNavigationView.getHeight());
+                        System.gc();
+                    }
+                    else if (dy < 0 )
+                    {
+                        bottomAppBar.animate().translationY(0);
+                        AddNewPostButton.animate().translationY(0);
+                        System.gc();
+                    }
+                }
+
+                @Override
+                public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                    super.onScrollStateChanged(recyclerView, newState);
+                }
+            });
+        }
+    }
 
     public class DisplayAllUsersPosts extends Thread
     {
         @Override
         public void run() {
             super.run();
+
             Query SortPostsInDescendingOrder =  PostsRef.orderByChild("counter");
 
             FirebaseRecyclerOptions<Posts> options = new FirebaseRecyclerOptions.Builder<Posts>()
@@ -224,6 +399,7 @@ public class MainActivity extends AppCompatActivity {
                             Intent commentsIntent = new Intent(MainActivity.this,CommentsActivity.class);
                             commentsIntent.putExtra("PostKey",PostKey);
                             startActivity(commentsIntent);
+                            firebaseRecyclerAdapter.stopListening();
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         }
                     });
@@ -234,8 +410,71 @@ public class MainActivity extends AppCompatActivity {
                         {
                             Intent i=new Intent(MainActivity.this,PublicPostActivity.class);
                             i.putExtra("PostKey",PostKey);
+                            firebaseRecyclerAdapter.stopListening();
                             startActivity(i);
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
+                        }
+                    });
+
+                    holder.mview.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View view)
+                        {
+
+                            String fullname= model.getFullname();
+                            String fn="";
+                            for(int i=0;i<fullname.length();i++)
+                            {
+                                fn=fn+(char)(fullname.charAt(i)-27);
+                            }
+                            fn="Posted by "+fn;
+
+                            String descc= model.getDescription();
+                            String ds="";
+                            for(int i=0;i<descc.length();i++)
+                            {
+                                ds=ds+(char)(descc.charAt(i)-27);
+                            }
+                            ds="The description of the post is : "+ds;
+
+                            String datee= model.getDate();
+                            String dt="";
+                            for(int i=0;i<datee.length();i++)
+                            {
+                                dt=dt+(char)(datee.charAt(i)-27);
+                            }
+                            String dt_new="";
+                            dt_new=dt.substring(dt.indexOf('-')+1,dt.lastIndexOf('-'))+" "+dt.substring(0,dt.indexOf('-'))+","+dt.substring(dt.lastIndexOf('-')+1);
+                            dt="and it was posted on "+dt_new;
+
+                            String total=fn+ds+dt;
+                            tts.setSpeechRate(0.9f);
+                            tts.speak(fn+ds+dt,TextToSpeech.QUEUE_FLUSH, null, "");
+                            holder.lt.setVisibility(View.VISIBLE);
+                            holder.lt.setRepeatCount(Animation.INFINITE);
+
+                            tts.setOnUtteranceProgressListener(new UtteranceProgressListener() {
+                                @Override
+                                public void onStart(String s)
+                                {
+
+                                }
+
+                                @Override
+                                public void onDone(String s)
+                                {
+                                    holder.lt.setVisibility(View.INVISIBLE);
+                                }
+
+                                @Override
+                                public void onError(String s) {
+                                    holder.lt.setVisibility(View.INVISIBLE);
+
+                                }
+                            });
+
+
+                            return true;
                         }
                     });
 
@@ -245,6 +484,7 @@ public class MainActivity extends AppCompatActivity {
                         {
                             Intent clickPostIntent = new Intent(MainActivity.this,ClickPostActivity.class);
                             clickPostIntent.putExtra("PostKey",PostKey);
+                            firebaseRecyclerAdapter.stopListening();
                             startActivity(clickPostIntent);
                             overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                         }
@@ -256,6 +496,8 @@ public class MainActivity extends AppCompatActivity {
                         {
                             try
                             {
+                                firebaseRecyclerAdapter.stopListening();
+                                firebaseRecyclerAdapter.notifyDataSetChanged();
                                 String imageUrl = model.getPostimage();
                                 ImageDownloadTarget target = new ImageDownloadTarget(MainActivity.this);
                                 Picasso.get().load(imageUrl).into(target);
@@ -281,6 +523,7 @@ public class MainActivity extends AppCompatActivity {
                                 shareIntent.putExtra(Intent.EXTRA_TEXT,model.getPostimage());
                                 shareIntent.putExtra(Intent.EXTRA_SUBJECT,model.getDescription());
                                 startActivity(Intent.createChooser(shareIntent,"Share Post"));*/
+
                             }
                             catch (Exception e)
                             {
@@ -293,32 +536,32 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view)
                         {
-                                LikeChecker=true;
-                                LikesRef.addValueEventListener(new ValueEventListener()
+                            LikeChecker=true;
+                            LikesRef.addValueEventListener(new ValueEventListener()
+                            {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot)
                                 {
-                                    @Override
-                                    public void onDataChange(@NonNull DataSnapshot snapshot)
+                                    if(LikeChecker==true)
                                     {
-                                        if(LikeChecker==true)
+                                        if(snapshot.child(PostKey).hasChild(current_user_id))
                                         {
-                                            if(snapshot.child(PostKey).hasChild(current_user_id))
-                                            {
-                                                LikesRef.child(PostKey).child(current_user_id).removeValue();
-                                                LikeChecker=false;
-                                            }
-                                            else
-                                            {
-                                                LikesRef.child(PostKey).child(current_user_id).setValue(true);
-                                                LikeChecker=false;
-                                            }
+                                            LikesRef.child(PostKey).child(current_user_id).removeValue();
+                                            LikeChecker=false;
+                                        }
+                                        else
+                                        {
+                                            LikesRef.child(PostKey).child(current_user_id).setValue(true);
+                                            LikeChecker=false;
                                         }
                                     }
+                                }
 
-                                    @Override
-                                    public void onCancelled(@NonNull DatabaseError error) {
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
-                                    }
-                                });
+                                }
+                            });
                         }
                     });
                 }
@@ -331,8 +574,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
             postList.setAdapter(firebaseRecyclerAdapter);
-        }
 
+        }
 
     }
 
@@ -392,7 +635,7 @@ public class MainActivity extends AppCompatActivity {
             File file = new File(directory, fileName);
             try {
                 FileOutputStream out = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out);
                 out.flush();
                 out.close();
             } catch (IOException e) {
@@ -410,6 +653,8 @@ public class MainActivity extends AppCompatActivity {
         TextView PostTime,PostDate,PostDescription,DisplayNoOfLikes,DisplayNoOfComments;
         ImageButton LikePostButton,CommentPostButton,SharePostButton;
         int countLikes;
+
+        LottieAnimationView lt;
         String currentUserId;
         DatabaseReference LikesRef,CommentsRef;
 
@@ -430,6 +675,7 @@ public class MainActivity extends AppCompatActivity {
            PostDescription = (TextView) mview.findViewById(R.id.post_description);
            PostImage=(ImageView) mview.findViewById(R.id.post_image);
            SharePostButton= (ImageButton) mview.findViewById(R.id.share_button);
+           lt=(LottieAnimationView)mview.findViewById(R.id.lot);
            SharePostButton.setHapticFeedbackEnabled(true);
            LikesRef=FirebaseDatabase.getInstance().getReference().child("Likes");
            CommentsRef=FirebaseDatabase.getInstance().getReference().child("Posts");
@@ -546,13 +792,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
+    protected void onStart()
+    {
         super.onStart();
 
-        firebaseRecyclerAdapter.startListening();
-        firebaseRecyclerAdapter.notifyDataSetChanged();
-        //deleteImage d=new deleteImage();
-        //d.deleteImageFromExternalStorage("");
+        System.gc();
+
+        if(firebaseRecyclerAdapter!=null) {
+            firebaseRecyclerAdapter.startListening();
+            firebaseRecyclerAdapter.notifyDataSetChanged();
+        }
+        navigationView.setCheckedItem(R.id.nav_home);
+
 
         if(currentUser==null)
         {
@@ -653,32 +904,42 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId())
         {
             case R.id.nav_post:
+                navigationView.setCheckedItem(R.id.nav_post);
                 SendUserToPostActivity();
                 break;
 
             case R.id.nav_profile:
                 SendUserToProfileActivity();
+                navigationView.setCheckedItem(R.id.nav_profile);
                 break;
 
             case R.id.nav_home:
                 Intent i=new Intent(MainActivity.this,MainActivity.class);
+                navigationView.setCheckedItem(R.id.nav_home);
                 overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
                 startActivity(i);
                 break;
                 
+            case R.id.askourai:
+                navigationView.setCheckedItem(R.id.askourai);
+                Intent ii=new Intent(MainActivity.this,AskAI.class);
+                startActivity(ii);
+                break;
+                
             case R.id.nav_disease:
-                Toast.makeText(this, "Find the diease has been clicked", Toast.LENGTH_SHORT).show();
+                navigationView.setCheckedItem(R.id.nav_disease);
+                Intent di=new Intent(MainActivity.this,Disease.class);
+                startActivity(di);
                 break;
 
-            /*case R.id.nav_friends:
-                Toast.makeText(this, "Friend List", Toast.LENGTH_SHORT).show();
+            case R.id.nav_guide:
+                navigationView.setCheckedItem(R.id.nav_guide);
+                Intent inte=new Intent(MainActivity.this,Realtime_Mentoring.class);
+                startActivity(inte);
                 break;
-
-            case R.id.nav_messages:
-                Toast.makeText(this, "Messages", Toast.LENGTH_SHORT).show();
-                break;*/
 
             case R.id.nav_settings:
+                navigationView.setCheckedItem(R.id.nav_settings);
                 SendUserToSettingsActivity();
                 break;
 
@@ -706,8 +967,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        firebaseRecyclerAdapter.startListening();
+        navigationView.setCheckedItem(R.id.nav_home);
+
+        if(firebaseRecyclerAdapter!=null) {
+            firebaseRecyclerAdapter.startListening();
+        }
+        //firebaseRecyclerAdapter.notifyDataSetChanged();
+        if(bottomNavigationView!=null && bottomNavigationView.getSelectedItemId()!=R.id.home)
+        {
+            finish();
+            bottomNavigationView.setSelectedItemId(R.id.home);
+        }
     }
+
+
+
 
     @Override
     protected void onPause() {
@@ -715,3 +989,4 @@ public class MainActivity extends AppCompatActivity {
         firebaseRecyclerAdapter.stopListening();
     }
 }
+

@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.example.greenbookapp"
         minSdk 28
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -37,6 +37,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:22.2.0'
     implementation 'com.google.firebase:firebase-database:20.2.2'
     implementation 'com.google.firebase:firebase-storage:20.2.1'
+    implementation 'androidx.activity:activity:1.8.0'
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -47,4 +48,14 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:8.0.2'
     implementation 'com.google.android.gms:play-services-auth:20.7.0'
     implementation "com.airbnb.android:lottie:6.0.0"
+
+    //Google Gemini API implememtations
+    implementation("com.google.ai.client.generativeai:generativeai:0.3.0")
+    implementation("com.google.guava:guava:31.0.1-android")
+
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
+
+    //AIzaSyBwhL1SIXnClCCIXcT1cKaLvHqjAf3AbqY
 }

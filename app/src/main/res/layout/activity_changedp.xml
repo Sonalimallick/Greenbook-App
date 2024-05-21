@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/newpostbg"
     tools:context=".changedp">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -12,7 +12,9 @@
         android:layout_height="350dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:id="@+id/dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
@@ -26,8 +28,11 @@
         android:id="@+id/tv_changedp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="600dp"
         android:layout_marginLeft="30dp"
+        android:layout_marginRight="70dp"
+        android:textColor="#AFFAC4"
         android:gravity="center"
         android:textStyle="bold"
         android:textSize="20dp"
@@ -40,6 +45,8 @@
         android:id="@+id/pgbar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="40dp"
         android:layout_marginTop="618dp"
         android:layout_marginLeft="330dp"
         />

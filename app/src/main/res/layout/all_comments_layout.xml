@@ -11,7 +11,7 @@
         android:layout_marginStart="7dp"
         android:layout_marginTop="7dp"
         android:layout_marginEnd="7dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/edittext7nnn"
         android:orientation="vertical">
 
@@ -29,8 +29,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:text="username"
+                android:fontFamily="@font/andika_new_basic"
                 android:textColor="@color/colorAccent"
-                android:textSize="16sp"
+                android:textSize="12.7sp"
                 android:textStyle="bold" />
 
 
@@ -38,10 +39,11 @@
                 android:id="@+id/comment_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
+                android:layout_marginLeft="8dp"
                 android:text=" Date : "
+                android:fontFamily="@font/andika_new_basic"
                 android:textColor="#D1CECE"
-                android:textSize="14sp"
+                android:textSize="12.4sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -49,9 +51,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="viewEnd"
+                android:fontFamily="@font/andika_new_basic"
                 android:textColor="#D1CECE"
-                android:layout_marginRight="10dp"
-                android:textSize="14sp"
+                android:layout_marginRight="8dp"
+                android:textSize="12.5sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
@@ -61,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="0dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="7dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="10dp"
             android:layout_marginBottom="8dp"
             android:orientation="vertical">
@@ -74,11 +77,10 @@
                 android:paddingLeft="18dp"
                 android:paddingRight="10dp"
                 android:paddingBottom="12dp"
+                android:fontFamily="@font/andika_new_basic"
                 android:text="Comment text will be displayed here... "
                 android:textColor="#A7F4CD"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
+                android:textSize="14sp"/>
 
         </LinearLayout>
 

@@ -4,6 +4,22 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lot"
+        android:layout_width="400dp"
+        android:layout_marginTop="5dp"
+        android:layout_height="100dp"
+        android:layout_marginStart="300dp"
+        app:lottie_repeatCount="@integer/material_motion_duration_long_2"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:elevation="18dp"
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/speakerr"
+        android:visibility="invisible"
+        />
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,6 +31,8 @@
         android:layout_marginTop="10dp"
         android:background="@drawable/post_border"
         >
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,8 +55,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                
-                
+
+
                 <TextView
                     android:id="@+id/post_user_name"
                     android:layout_width="match_parent"
@@ -85,7 +103,7 @@
                 </LinearLayout>
 
             </LinearLayout>
-            
+
         </LinearLayout>
 
         <TextView
@@ -115,23 +133,23 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="4dp"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="07dp"
             android:layout_marginRight="10dp">
 
             <ImageButton
                 android:id="@+id/like_button"
-                android:layout_width="wrap_content"
+                android:layout_width="55dp"
                 android:layout_marginBottom="10dp"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="30sp"
                 android:layout_height="wrap_content"
                 android:src="@drawable/dislike"/>
-            
+
             <TextView
                 android:id="@+id/display_no_of_likes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:layout_marginLeft="-2dp"
+                android:layout_marginLeft="-5sp"
                 android:text="0"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -139,9 +157,9 @@
 
             <ImageButton
                 android:id="@+id/comment_button"
-                android:layout_width="wrap_content"
+                android:layout_width="55dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="60dp"
+                android:layout_marginLeft="60sp"
                 android:layout_marginTop="3dp"
                 android:baselineAlignBottom="false"
                 android:src="@drawable/comment"/>
@@ -151,7 +169,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:layout_marginLeft="0dp"
+                android:layout_marginLeft="-5dp"
                 android:text="0"
                 android:textColor="@color/black"
                 android:textSize="14sp"
@@ -159,7 +177,7 @@
 
             <ImageButton
                 android:id="@+id/share_button"
-                android:layout_width="wrap_content"
+                android:layout_width="55dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:layout_marginLeft="67dp"

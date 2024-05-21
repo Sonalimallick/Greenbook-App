@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/newpostbg"
+    tools:context=".PostActivity">
+
+    <include layout="@layout/app_bar_layout"
+        android:id="@+id/disease_page_toolbar"
+        />
+
+
+    <Button
+        android:layout_width="123dp"
+        android:layout_height="45dp"
+        android:text="Retry"
+        android:textColor="@color/black"
+        android:layout_alignParentLeft="true"
+        android:textSize="14dp"
+        android:id="@+id/retry"
+        android:background="@drawable/button"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="120dp"
+        android:layout_marginStart="120dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="invisible"
+        />
+
+    <ImageButton
+        android:id="@+id/select_disease_image"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginTop="59dp"
+        android:layout_marginRight="4dp"
+        android:background="@drawable/select_image"
+        android:scaleType="centerCrop" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:id="@+id/scanner"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="1dp"
+        android:layout_marginBottom="40dp"
+        app:lottie_repeatCount="@integer/material_motion_duration_long_2"
+        app:lottie_autoPlay="true"
+        android:layout_alignParentTop="true"
+        app:lottie_rawRes="@raw/scan"
+        android:visibility="invisible"
+        />
+
+    <TextView
+        android:layout_width="390dp"
+        android:layout_height="300dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="422dp"
+        android:id="@+id/disease_description"
+        android:textColorHint="#5C835C"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:hint="Upload an image of a leaf or plant and then click the &quot;Analyze Health&quot; button to assess the health of your plant."
+        android:paddingTop="10dp"
+        android:scrollbarThumbVertical="@drawable/custom_scrollbar"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:textSize="18sp"
+        android:paddingBottom="10dp"
+        android:scrollbars="vertical"
+        android:gravity="left"
+        android:fontFamily="@font/andika_new_basic"
+        android:textColor="#C0F8C0"
+        android:background="@drawable/edittext7nnn"
+        />
+
+    <Button
+        android:layout_width="178dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:text="Analyze Health"
+        android:id="@+id/disease_post_button"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginLeft="111dp"
+        android:layout_marginRight="111dp"
+        android:fontFamily="@font/andika_new_basic"
+        android:background="@drawable/button"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"/>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="60dp"
+        android:layout_height="55dp"
+        android:id="@+id/pgbar"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_marginEnd="180dp"
+        app:lottie_repeatCount="@integer/material_motion_duration_long_2"
+        app:lottie_autoPlay="true"
+        app:lottie_rawRes="@raw/loading"
+        android:visibility="invisible"
+        />
+
+</RelativeLayout>
